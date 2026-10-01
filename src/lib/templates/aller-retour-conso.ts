@@ -1,15 +1,16 @@
 import { formatNumber, formatTonnes, roundTo } from "../format";
+import { AIRCRAFT, BASES } from "../constants";
 import {
-  AIRCRAFT,
   makeQuestion,
   nearbyDistractors,
   randChoice,
   type TemplateGenerator,
-} from "./helpers";
+} from "../helpers";
 
 /** Phase aller + retour → carburant restant */
 export const allerRetourConso: TemplateGenerator = () => {
   const craft = randChoice([...AIRCRAFT.jet]);
+  const base = randChoice([...BASES]);
   const fuelTons = randChoice([2.5, 2.8, 3.2, 3.5, 4.0, 4.3, 4.5]);
   const t1min = randChoice([18, 20, 22, 25, 28, 30, 32]);
   const v1 = randChoice([550, 580, 650, 700, 800, 880]);
@@ -32,7 +33,7 @@ export const allerRetourConso: TemplateGenerator = () => {
 
   return makeQuestion(
     "aller-retour-conso",
-    `Dans le cadre d'un exercice militaire, un ${craft} décolle avec ${formatNumber(fuelTons, 1)} tonnes de carburant. Il effectue une première phase de vol pendant ${t1min} minutes à ${formatNumber(v1)} km/h avec une consommation de ${formatNumber(c1, 2)} tonne par heure. Suite à un ordre de mission, il doit regagner sa base à ${formatNumber(v2)} km/h en consommant ${formatNumber(c2, 2)} tonne par heure. Quel carburant reste-t-il à son retour ?`,
+    `Dans le cadre d'un exercice militaire, un ${craft} décolle de ${base} avec ${formatNumber(fuelTons, 1)} tonnes de carburant. Il effectue une première phase de vol pendant ${t1min} minutes à ${formatNumber(v1)} km/h avec une consommation de ${formatNumber(c1, 2)} tonne par heure. Suite à un ordre de mission, il doit regagner sa base de ${base} à ${formatNumber(v2)} km/h en consommant ${formatNumber(c2, 2)} tonne par heure. Quel carburant reste-t-il à son retour ?`,
     correctLabel,
     distractors,
     [

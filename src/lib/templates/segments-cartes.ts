@@ -1,11 +1,11 @@
 import { formatKm, formatNumber, roundTo } from "../format";
+import { AIRCRAFT } from "../constants";
 import {
-  AIRCRAFT,
   makeQuestion,
   nearbyDistractors,
   randChoice,
   type TemplateGenerator,
-} from "./helpers";
+} from "../helpers";
 
 /** 3 segments (cartes + temps) → distance totale */
 export const segmentsCartes: TemplateGenerator = () => {

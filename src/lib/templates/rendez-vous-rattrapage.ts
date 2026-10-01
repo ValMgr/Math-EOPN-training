@@ -1,15 +1,16 @@
 import { addMinutesToClock, formatClock, formatNumber, roundTo } from "../format";
+import { AIRCRAFT, BASES } from "../constants";
 import {
-  AIRCRAFT,
   makeQuestion,
   randChoice,
   type TemplateGenerator,
-} from "./helpers";
+} from "../helpers";
 
 /** Décollage décalé → heure de rendez-vous */
 export const rendezVousRattrapage: TemplateGenerator = () => {
   const slowCraft = randChoice([...AIRCRAFT.helico]);
   const fastCraft = randChoice([...AIRCRAFT.jet]);
+  const base = randChoice([...BASES]);
   const startH = randChoice([8, 9, 10, 11, 14, 15]);
   const startM = randChoice([0, 5, 10, 15, 20, 30, 45]);
   const delayMin = randChoice([20, 25, 30, 35, 40, 45]);
@@ -34,7 +35,7 @@ export const rendezVousRattrapage: TemplateGenerator = () => {
 
   return makeQuestion(
     "rendez-vous-rattrapage",
-    `Durant un exercice tactique, un ${slowCraft} quitte la base à ${formatClock(startH, startM)} en maintenant une vitesse de ${formatNumber(vSlow)} km/h. Un ${fastCraft} décolle ${delayMin} minutes plus tard du même aérodrome pour rejoindre la zone au même moment, volant à ${formatNumber(vFast)} km/h. À quelle heure les deux appareils se retrouveront-ils au point de rendez-vous ?`,
+    `Durant un exercice tactique, un ${slowCraft} quitte la base de ${base} à ${formatClock(startH, startM)} en maintenant une vitesse de ${formatNumber(vSlow)} km/h. Un ${fastCraft} décolle ${delayMin} minutes plus tard de la même base pour rejoindre la zone au même moment, volant à ${formatNumber(vFast)} km/h. À quelle heure les deux appareils se retrouveront-ils au point de rendez-vous ?`,
     correctLabel,
     distractors,
     [

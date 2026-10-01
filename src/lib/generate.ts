@@ -1,6 +1,6 @@
 import type { Question } from "./types";
 import { TEMPLATES } from "./templates";
-import { shuffle } from "./templates/helpers";
+import { shuffle } from "./helpers";
 
 export function generateQuestions(count: number): Question[] {
   const n = Math.max(1, Math.min(25, count));

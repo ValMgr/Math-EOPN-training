@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ConfigForm } from "@/components/config-form";
+import { ConfigForm } from "@/components/qcm/config-form";
 import {
   Card,
   CardContent,

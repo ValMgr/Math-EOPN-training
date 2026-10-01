@@ -1,3 +1,4 @@
+import { AIRCRAFT } from "../constants";
 import {
   formatKg,
   formatNumber,
@@ -6,12 +7,11 @@ import {
   roundTo,
 } from "../format";
 import {
-  AIRCRAFT,
   makeQuestion,
   nearbyDistractors,
   randChoice,
   type TemplateGenerator,
-} from "./helpers";
+} from "../helpers";
 
 /** Distance, conso L/h, majoration météo %, densité → masse */
 export const masseCarburantReserveMeteo: TemplateGenerator = () => {

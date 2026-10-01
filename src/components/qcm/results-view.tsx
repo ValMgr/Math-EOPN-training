@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SolutionSteps } from "@/components/solution-steps";
+import { SolutionSteps } from "@/components/qcm/solution-steps";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";

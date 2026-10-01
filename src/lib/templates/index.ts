@@ -1,4 +1,4 @@
-import type { TemplateGenerator } from "./helpers";
+import type { TemplateGenerator } from "../helpers";
 import { carburantRotationUrgence } from "./carburant-rotation-urgence";
 import { turbulencesMasse } from "./turbulences-masse";
 import { rendezVousRattrapage } from "./rendez-vous-rattrapage";
@@ -23,4 +23,4 @@ export const TEMPLATES: TemplateGenerator[] = [
   rencontreFrontale,
 ];
 
-export { type TemplateGenerator } from "./helpers";
+export { type TemplateGenerator } from "../helpers";

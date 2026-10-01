@@ -1,7 +1,7 @@
 "use client";
 
-import { AnswerChoices } from "@/components/answer-choices";
-import { SolutionSteps } from "@/components/solution-steps";
+import { AnswerChoices } from "@/components/qcm/answer-choices";
+import { SolutionSteps } from "@/components/qcm/solution-steps";
 import { Button } from "@/components/ui/button";
 import type { Question } from "@/lib/types";
 

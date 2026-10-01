@@ -1,14 +1,15 @@
 import { formatDurationHMS, formatNumber, roundTo } from "../format";
+import { AIRCRAFT, BASES } from "../constants";
 import {
-  AIRCRAFT,
   makeQuestion,
   randChoice,
   type TemplateGenerator,
-} from "./helpers";
+} from "../helpers";
 
 /** Carte + 2 phases + procédures % → durée */
 export const cartePhasesProcedures: TemplateGenerator = () => {
   const craft = randChoice([...AIRCRAFT.jet]);
+  const base = randChoice([...BASES]);
   const scale = randChoice([500_000, 1_000_000, 2_000_000]);
   const cm1 = randChoice([10, 12, 14, 16, 18]);
   const cm2 = randChoice([12, 15, 18, 20, 22]);
@@ -32,7 +33,7 @@ export const cartePhasesProcedures: TemplateGenerator = () => {
 
   return makeQuestion(
     "carte-phases-procedures",
-    `Lors d'un exercice militaire, un pilote de ${craft} consulte sa carte au 1:${formatNumber(scale)}. Il mesure ${cm1} cm entre sa base et l'objectif, puis ${cm2} cm supplémentaires jusqu'au point de rendez-vous final. Durant la première phase, il vole à ${formatNumber(v1)} km/h, mais doit ralentir de ${formatNumber(pctSlow * 100)} % pour la phase d'approche finale. Les procédures de décollage et d'atterrissage représentent un temps additionnel de ${formatNumber(procedurePct * 100)} % de la durée totale de mission. Quelle est la durée complète de cette mission ?`,
+    `Lors d'un exercice militaire, un pilote de ${craft} consulte sa carte au 1:${formatNumber(scale)}. Il mesure ${cm1} cm entre sa base de ${base} et l'objectif, puis ${cm2} cm supplémentaires jusqu'au point de rendez-vous final. Durant la première phase, il vole à ${formatNumber(v1)} km/h, mais doit ralentir de ${formatNumber(pctSlow * 100)} % pour la phase d'approche finale. Les procédures de décollage et d'atterrissage représentent un temps additionnel de ${formatNumber(procedurePct * 100)} % de la durée totale de mission. Quelle est la durée complète de cette mission ?`,
     correctLabel,
     distractors,
     [

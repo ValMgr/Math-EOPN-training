@@ -1,3 +1,4 @@
+import { AIRCRAFT } from "../constants";
 import {
   formatLiters,
   formatNumber,
@@ -5,13 +6,12 @@ import {
   roundTo,
 } from "../format";
 import {
-  AIRCRAFT,
   makeQuestion,
   nearbyDistractors,
   randChoice,
   randInt,
   type TemplateGenerator,
-} from "./helpers";
+} from "../helpers";
 
 /** Vitesse/conso +%, A/R → volume carburant */
 export const carburantRotationUrgence: TemplateGenerator = () => {

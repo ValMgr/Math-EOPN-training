@@ -1,5 +1,5 @@
-import type { Question, SolutionStep } from "../types";
-import { roundTo } from "../format";
+import type { Question, SolutionStep } from "./types";
+import { roundTo } from "./format";
 
 export type TemplateGenerator = () => Question;
 
@@ -79,28 +79,3 @@ export function makeQuestion(
     steps,
   };
 }
-
-export const AIRCRAFT = {
-  helico: [
-    "hélicoptère Gazelle",
-    "hélicoptère Tigre",
-    "hélicoptère Cougar",
-    "hélicoptère NH90",
-    "hélicoptère Super Puma",
-    "hélicoptère de la Sécurité civile",
-  ],
-  jet: [
-    "Rafale B",
-    "Mirage 2000",
-    "Alpha Jet",
-    "Gripen",
-    "F-16",
-    "chasseur",
-  ],
-  transport: [
-    "ATR 42-500",
-    "turboprop de transport",
-    "bimoteur civil",
-    "avion de transport",
-  ],
-} as const;

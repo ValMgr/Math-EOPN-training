@@ -1,3 +1,4 @@
+import { AIRCRAFT } from "../constants";
 import {
   formatKm,
   formatNumber,
@@ -5,12 +6,11 @@ import {
   roundTo,
 } from "../format";
 import {
-  AIRCRAFT,
   makeQuestion,
   nearbyDistractors,
   randChoice,
   type TemplateGenerator,
-} from "./helpers";
+} from "../helpers";
 
 /** Capacité + réserve + densité → distance max */
 export const autonomieReserveSecurite: TemplateGenerator = () => {

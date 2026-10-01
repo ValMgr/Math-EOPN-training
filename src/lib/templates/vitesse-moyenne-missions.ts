@@ -1,11 +1,11 @@
 import { formatKmH, formatNumber, roundTo } from "../format";
+import { AIRCRAFT } from "../constants";
 import {
-  AIRCRAFT,
   makeQuestion,
   nearbyDistractors,
   randChoice,
   type TemplateGenerator,
-} from "./helpers";
+} from "../helpers";
 
 function toHours(h: number, m: number): number {
   return h + m / 60;

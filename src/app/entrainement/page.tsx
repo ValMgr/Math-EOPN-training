@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
-import { QuestionCard } from "@/components/question-card";
-import { ResultsView } from "@/components/results-view";
-import { SessionHeader } from "@/components/session-header";
+import { QuestionCard } from "@/components/qcm/question-card";
+import { ResultsView } from "@/components/qcm/results-view";
+import { SessionHeader } from "@/components/qcm/session-header";
 import {
   getServerSessionSnapshot,
   getSessionSnapshot,

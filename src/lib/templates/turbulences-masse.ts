@@ -1,3 +1,4 @@
+import { AIRCRAFT } from "../constants";
 import {
   formatNumber,
   formatPercent,
@@ -5,12 +6,11 @@ import {
   roundTo,
 } from "../format";
 import {
-  AIRCRAFT,
   makeQuestion,
   nearbyDistractors,
   randChoice,
   type TemplateGenerator,
-} from "./helpers";
+} from "../helpers";
 
 /** 2 phases (normale puis turbulences) + densité → tonnes */
 export const turbulencesMasse: TemplateGenerator = () => {

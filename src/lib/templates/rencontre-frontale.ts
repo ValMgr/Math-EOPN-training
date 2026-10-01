@@ -1,14 +1,14 @@
+import { AIRCRAFT } from "../constants";
 import { formatDurationHMS, formatNumber, roundTo } from "../format";
 import {
-  AIRCRAFT,
   makeQuestion,
   randChoice,
   type TemplateGenerator,
-} from "./helpers";
+} from "../helpers";
 
 /** Deux aéronefs face-à-face → temps de jonction */
 export const rencontreFrontale: TemplateGenerator = () => {
-  const craft = randChoice(["Fouga Magister", "Alpha Jet", "TB-30 Epsilon"]);
+  const craft = randChoice([...AIRCRAFT.jet, ...AIRCRAFT.transport]);
   const distance = randChoice([200, 220, 240, 260, 280, 300]);
   // One speed in m/s, other in km/h
   const v1ms = randChoice([140, 150, 160, 170, 180]);
