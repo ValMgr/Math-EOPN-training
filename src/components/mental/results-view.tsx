@@ -19,6 +19,10 @@ type MentalResultsViewProps = {
   remainingMs: number;
 };
 
+function formatAnswer(n: number): string {
+  return String(n).replace(".", ",");
+}
+
 export function MentalResultsView({
   questions,
   answers,
@@ -31,12 +35,11 @@ export function MentalResultsView({
   const usedMs = Math.max(0, durationMs - remainingMs);
   const pct = total > 0 ? Math.round((score / total) * 100) : 0;
 
-  const errors = questions
+  const reviewed = questions
     .map((q, i) => ({ question: q, answer: answers[i]! }))
-    .filter(
-      ({ answer }) =>
-        answer.userAnswer !== null && !answer.isCorrect
-    );
+    .filter(({ answer }) => answer.userAnswer !== null);
+
+  const errors = reviewed.filter(({ answer }) => !answer.isCorrect);
 
   return (
     <div className="animate-fade-up mx-auto max-w-3xl space-y-8 px-4 py-10 sm:px-6">
@@ -87,46 +90,64 @@ export function MentalResultsView({
 
       <div className="space-y-6">
         <h2 className="font-heading text-xl font-semibold">
-          {errors.length === 0
-            ? "Aucune erreur"
-            : "Récapitulatif des erreurs"}
+          Récapitulatif
         </h2>
 
-        {errors.length === 0 ? (
-          <div className="flex items-center justify-center gap-2 rounded-2xl border border-border/70 bg-card/80 p-8 text-success">
-            <CheckCircle2 className="size-5" />
-            <p className="font-medium">Parfait — toutes les réponses sont justes.</p>
+        {reviewed.length === 0 ? (
+          <div className="text-muted-foreground rounded-2xl border border-border/70 bg-card/80 p-8 text-center text-sm">
+            Aucune réponse enregistrée.
           </div>
         ) : (
-          errors.map(({ question, answer }, i) => (
-            <article
-              key={question.id}
-              className="space-y-3 rounded-2xl border border-border/70 bg-card/80 p-5 shadow-sm"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <h3 className="font-heading text-base font-semibold">
-                  Erreur {i + 1}
-                </h3>
-                <Badge variant="destructive" className="gap-1">
-                  <XCircle className="size-3" />
-                  Incorrect
-                </Badge>
-              </div>
-              <p className="font-heading text-2xl font-semibold tabular-nums">
-                {question.expression} = ?
-              </p>
-              <div className="text-sm">
-                <p>
-                  <span className="text-muted-foreground">Votre réponse : </span>
-                  {answer.userAnswer}
+          reviewed.map(({ question, answer }, i) => {
+            const correct = answer.isCorrect;
+            return (
+              <article
+                key={question.id}
+                className="space-y-3 rounded-2xl border border-border/70 bg-card/80 p-5 shadow-sm"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h3 className="font-heading text-base font-semibold">
+                    Question {i + 1}
+                  </h3>
+                  {correct ? (
+                    <Badge className="bg-success text-success-foreground gap-1">
+                      <CheckCircle2 className="size-3" />
+                      Correct
+                    </Badge>
+                  ) : (
+                    <Badge variant="destructive" className="gap-1">
+                      <XCircle className="size-3" />
+                      Incorrect
+                    </Badge>
+                  )}
+                </div>
+                <p className="font-heading text-2xl font-semibold tabular-nums">
+                  {question.expression} ={" "}
+                  <span className={correct ? "text-success" : undefined}>
+                    {formatAnswer(question.answer)}
+                  </span>
                 </p>
-                <p>
-                  <span className="text-muted-foreground">Bonne réponse : </span>
-                  {question.answer}
-                </p>
-              </div>
-            </article>
-          ))
+                <div className="text-sm">
+                  <p>
+                    <span className="text-muted-foreground">
+                      Votre réponse :{" "}
+                    </span>
+                    {answer.userAnswer !== null
+                      ? formatAnswer(answer.userAnswer)
+                      : "—"}
+                  </p>
+                  {!correct && (
+                    <p>
+                      <span className="text-muted-foreground">
+                        Bonne réponse :{" "}
+                      </span>
+                      {formatAnswer(question.answer)}
+                    </p>
+                  )}
+                </div>
+              </article>
+            );
+          })
         )}
       </div>
     </div>

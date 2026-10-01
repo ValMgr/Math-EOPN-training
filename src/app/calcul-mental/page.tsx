@@ -35,8 +35,8 @@ export default function CalculMentalConfigPage() {
             className="text-muted-foreground animate-fade-up mx-auto max-w-md text-base leading-relaxed sm:text-lg"
             style={{ animationDelay: "120ms" }}
           >
-            Choisissez les opérations et la durée — enchaînez les calculs
-            jusqu&apos;à la fin du chrono.
+            Choisissez les opérations (dont pourcentages et conversions) et la
+            durée — enchaînez les calculs jusqu&apos;à la fin du chrono.
           </p>
         </div>
 

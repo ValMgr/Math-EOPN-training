@@ -40,7 +40,13 @@ export function MentalQuestionPanel({
       <p className="text-muted-foreground text-sm">
         Question {questionNumber}
       </p>
-      <p className="font-heading text-center text-5xl font-semibold tracking-tight tabular-nums sm:text-6xl">
+      <p
+        className={`font-heading text-center font-semibold tracking-tight tabular-nums ${
+          question.expression.length > 14
+            ? "text-3xl sm:text-4xl"
+            : "text-5xl sm:text-6xl"
+        }`}
+      >
         {question.expression}
         <span className="text-muted-foreground"> = ?</span>
       </p>
@@ -55,8 +61,8 @@ export function MentalQuestionPanel({
         <Input
           ref={inputRef}
           type="text"
-          inputMode="numeric"
-          pattern="-?[0-9]*"
+          inputMode="decimal"
+          pattern="-?[0-9]*[,.]?[0-9]*"
           autoComplete="off"
           autoCorrect="off"
           spellCheck={false}

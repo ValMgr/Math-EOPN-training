@@ -21,7 +21,7 @@ const modes = [
     href: "/calcul-mental",
     title: "Calcul mental",
     description:
-      "Opérations de base en série chronométrée — tapez les réponses le plus vite possible.",
+      "Opérations, pourcentages et conversions en série chronométrée — tapez les réponses le plus vite possible.",
     icon: Brain,
     delay: "240ms",
   },

@@ -12,7 +12,10 @@ import {
   saveMentalSession,
   subscribeMentalSession,
 } from "@/lib/mental/session";
-import type { MentalSessionState } from "@/lib/mental/types";
+import {
+  isMentalAnswerCorrect,
+  type MentalSessionState,
+} from "@/lib/mental/types";
 
 export default function CalculMentalSessionPage() {
   const router = useRouter();
@@ -121,7 +124,7 @@ export default function CalculMentalSessionPage() {
     answers[prev.currentIndex] = {
       questionId: q.id,
       userAnswer: value,
-      isCorrect: value === q.answer,
+      isCorrect: isMentalAnswerCorrect(q.op, value, q.answer),
     };
 
     const withAnswer: MentalSessionState = { ...prev, answers };

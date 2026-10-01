@@ -13,7 +13,15 @@ import {
   saveMentalSession,
 } from "@/lib/mental/session";
 import type { MentalOp } from "@/lib/mental/types";
-import { Clock, Divide, Minus, Plus, X } from "lucide-react";
+import {
+  ArrowLeftRight,
+  Clock,
+  Divide,
+  Minus,
+  Percent,
+  Plus,
+  X,
+} from "lucide-react";
 
 const OP_OPTIONS: {
   id: MentalOp;
@@ -25,6 +33,8 @@ const OP_OPTIONS: {
   { id: "sub", label: "Soustraction", symbol: "−", icon: Minus },
   { id: "mul", label: "Multiplication", symbol: "×", icon: X },
   { id: "div", label: "Division", symbol: "÷", icon: Divide },
+  { id: "pct", label: "Pourcentages", symbol: "%", icon: Percent },
+  { id: "conv", label: "Conversions", symbol: "⇄", icon: ArrowLeftRight },
 ];
 
 export function MentalConfigForm() {
@@ -34,6 +44,8 @@ export function MentalConfigForm() {
     "sub",
     "mul",
     "div",
+    "pct",
+    "conv",
   ]);
   const [durationMinutes, setDurationMinutes] = useState(3);
 
