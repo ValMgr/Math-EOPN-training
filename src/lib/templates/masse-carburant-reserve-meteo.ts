@@ -44,7 +44,7 @@ export const masseCarburantReserveMeteo: TemplateGenerator = () => {
 
   return makeQuestion(
     "masse-carburant-reserve-meteo",
-    `Un ${craft} doit effectuer un acheminement vers une destination située à ${formatNumber(distance)} km. La vitesse de croisière est de ${formatNumber(speed)} km/h. Le débit de carburant planifié est de ${formatNumber(consumption)} L/h, mais les prévisions atmosphériques imposent une réserve supplémentaire de ${formatPercent(reservePct)}. Avec une densité du kérosène de ${formatNumber(density, 2)}, quelle masse de carburant sera nécessaire ?`,
+    `Un ${craft} doit effectuer un acheminement vers une destination située à ${formatNumber(distance)} km. La vitesse de croisière est de ${formatNumber(speed)} km/h. Le débit de carburant planifié est de ${formatNumber(consumption)} L/h, mais les prévisions atmosphériques imposent une réserve supplémentaire de ${formatPercent(reservePct)}. Avec une densité du kérosène de ${formatNumber(density, 2)} kg/L, quelle masse de carburant sera nécessaire ?`,
     correctLabel,
     distractors,
     [
