@@ -1,9 +1,10 @@
-import { formatNumber, formatTonnes, roundTo } from "../format";
+import { formatNumber, formatTonnes, roundHours, roundTo } from "../format";
 import { AIRCRAFT, BASES } from "../constants";
 import {
   makeQuestion,
   nearbyDistractors,
   randChoice,
+  spacedDeltas,
   type TemplateGenerator,
 } from "../helpers";
 
@@ -18,15 +19,20 @@ export const allerRetourConso: TemplateGenerator = () => {
   const v2 = randChoice([480, 520, 600, 650, 700, 720]);
   const c2 = randChoice([0.5, 0.55, 0.6, 0.65, 0.7]);
 
-  const t1 = t1min / 60;
-  const d = v1 * t1;
-  const t2 = d / v2;
-  const consumed = c1 * t1 + c2 * t2;
+  const t1 = roundHours(t1min / 60);
+  const d = roundTo(v1 * t1, 2);
+  const t2 = roundHours(d / v2);
+  const cons1 = roundTo(c1 * t1, 2);
+  const cons2 = roundTo(c2 * t2, 2);
+  const consumed = roundTo(cons1 + cons2, 2);
   const remaining = roundTo(fuelTons - consumed, 2);
 
   const { correctLabel, distractors } = nearbyDistractors(
     remaining,
-    [0.02, -0.04, 0.05, -0.03, 0.08, roundTo(fuelTons - c1 * t1, 2) - remaining],
+    spacedDeltas(
+      [0.3, -0.5, 0.7, -0.9, 1.1, roundTo(fuelTons - cons1, 2) - remaining],
+      0.2
+    ),
     (n) => formatTonnes(n, 2),
     2
   );
@@ -39,19 +45,19 @@ export const allerRetourConso: TemplateGenerator = () => {
     [
       {
         title: "Distance de la première phase",
-        detail: `Temps initial = ${t1min}/60 = ${formatNumber(roundTo(t1, 4), 4)} h\nDistance = ${formatNumber(v1)} × ${formatNumber(roundTo(t1, 4), 4)} = ${formatNumber(roundTo(d, 2), 2)} km`,
+        detail: `Temps initial = ${t1min}/60 = ${formatNumber(t1, 2)} h\nDistance = ${formatNumber(v1)} × ${formatNumber(t1, 2)} = ${formatNumber(d, 2)} km`,
       },
       {
         title: "Temps de retour",
-        detail: `Temps retour = ${formatNumber(roundTo(d, 2), 2)} ÷ ${formatNumber(v2)} = ${formatNumber(roundTo(t2, 4), 4)} h`,
+        detail: `Temps retour = ${formatNumber(d, 2)} ÷ ${formatNumber(v2)} = ${formatNumber(t2, 2)} h`,
       },
       {
         title: "Consommations",
-        detail: `Phase 1 : ${formatNumber(c1, 2)} × ${formatNumber(roundTo(t1, 4), 4)} = ${formatNumber(roundTo(c1 * t1, 3), 3)} t\nRetour : ${formatNumber(c2, 2)} × ${formatNumber(roundTo(t2, 4), 4)} = ${formatNumber(roundTo(c2 * t2, 3), 3)} t\nTotal consommé = ${formatNumber(roundTo(consumed, 3), 3)} t`,
+        detail: `Phase 1 : ${formatNumber(c1, 2)} × ${formatNumber(t1, 2)} = ${formatNumber(cons1, 2)} t\nRetour : ${formatNumber(c2, 2)} × ${formatNumber(t2, 2)} = ${formatNumber(cons2, 2)} t\nTotal consommé = ${formatNumber(cons1, 2)} + ${formatNumber(cons2, 2)} = ${formatNumber(consumed, 2)} t`,
       },
       {
         title: "Carburant restant",
-        detail: `${formatNumber(fuelTons, 1)} − ${formatNumber(roundTo(consumed, 3), 3)} = ${formatTonnes(remaining, 2)}`,
+        detail: `${formatNumber(fuelTons, 1)} − ${formatNumber(consumed, 2)} = ${formatTonnes(remaining, 2)}`,
       },
     ]
   );

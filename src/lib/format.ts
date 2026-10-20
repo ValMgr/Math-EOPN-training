@@ -94,3 +94,18 @@ export function roundTo(value: number, decimals: number): number {
   const f = 10 ** decimals;
   return Math.round(value * f) / f;
 }
+
+/** Hours kept for hand calculation: two decimal places, then reused as-is. */
+export function roundHours(hours: number): number {
+  return roundTo(hours, 2);
+}
+
+/** HMS label shifted by whole minutes from a two-decimal hour value. */
+export function formatDurationPlusMinutes(
+  hours: number,
+  deltaMinutes: number
+): string {
+  const baseSec = Math.round(roundHours(hours) * 3600);
+  const totalSec = baseSec + Math.round(deltaMinutes) * 60;
+  return formatDurationHMS(totalSec / 3600);
+}

@@ -47,6 +47,17 @@ export function buildChoices(
   };
 }
 
+/** Keep offsets far enough from zero and from each other. */
+export function spacedDeltas(deltas: number[], minGap: number): number[] {
+  const kept: number[] = [];
+  for (const d of deltas) {
+    if (!Number.isFinite(d) || Math.abs(d) < minGap) continue;
+    if (kept.some((k) => Math.abs(k - d) < minGap)) continue;
+    kept.push(d);
+  }
+  return kept;
+}
+
 /** Numeric distractors around a correct value */
 export function nearbyDistractors(
   correct: number,

@@ -1,4 +1,10 @@
-import { formatDurationHMS, formatNumber, roundTo } from "../format";
+import {
+  formatDurationHMS,
+  formatDurationPlusMinutes,
+  formatNumber,
+  roundHours,
+  roundTo,
+} from "../format";
 import { AIRCRAFT, BASES } from "../constants";
 import {
   makeQuestion,
@@ -20,15 +26,17 @@ export const cartePhasesProcedures: TemplateGenerator = () => {
   const kmPerCm = scale / 100_000;
   const d1 = cm1 * kmPerCm;
   const d2 = cm2 * kmPerCm;
-  const v2 = v1 * (1 - pctSlow);
-  const tVol = d1 / v1 + d2 / v2;
-  const tTotal = tVol / (1 - procedurePct);
+  const v2 = roundTo(v1 * (1 - pctSlow), 1);
+  const t1 = roundHours(d1 / v1);
+  const t2 = roundHours(d2 / v2);
+  const tVol = roundHours(t1 + t2);
+  const flightFactor = roundTo(1 - procedurePct, 2);
+  const tTotal = roundHours(tVol / flightFactor);
   const correctLabel = formatDurationHMS(tTotal);
 
-  // Nearby distractors by shifting seconds
-  const offsetsSec = [-90, 60, -45, 120, -30];
-  const distractors = offsetsSec.map((s) =>
-    formatDurationHMS(tTotal + s / 3600)
+  // At least 6 min apart: a 0,01 h rounding step is only 36 s.
+  const distractors = [-12, -6, 6, 12, 18].map((min) =>
+    formatDurationPlusMinutes(tTotal, min)
   );
 
   return makeQuestion(
@@ -43,15 +51,15 @@ export const cartePhasesProcedures: TemplateGenerator = () => {
       },
       {
         title: "Vitesse d'approche",
-        detail: `Vitesse phase 2 = ${formatNumber(v1)} × (1 − ${pctSlow.toFixed(2).replace(".", ",")}) = ${formatNumber(roundTo(v2, 1), 1)} km/h`,
+        detail: `Vitesse phase 2 = ${formatNumber(v1)} × (1 − ${pctSlow.toFixed(2).replace(".", ",")}) = ${formatNumber(v2, 1)} km/h`,
       },
       {
         title: "Temps de vol pur",
-        detail: `t₁ = ${formatNumber(d1)} ÷ ${formatNumber(v1)} = ${formatNumber(roundTo(d1 / v1, 4), 4)} h\nt₂ = ${formatNumber(d2)} ÷ ${formatNumber(roundTo(v2, 1), 1)} = ${formatNumber(roundTo(d2 / v2, 4), 4)} h\nT_vol = ${formatNumber(roundTo(tVol, 4), 4)} h`,
+        detail: `t₁ = ${formatNumber(d1)} ÷ ${formatNumber(v1)} = ${formatNumber(t1, 2)} h\nt₂ = ${formatNumber(d2)} ÷ ${formatNumber(v2, 1)} = ${formatNumber(t2, 2)} h\nT_vol = ${formatNumber(t1, 2)} + ${formatNumber(t2, 2)} = ${formatNumber(tVol, 2)} h`,
       },
       {
         title: "Ajout des procédures",
-        detail: `T_total = T_vol ÷ (1 − ${procedurePct.toFixed(2).replace(".", ",")}) = ${formatNumber(roundTo(tVol, 4), 4)} ÷ ${formatNumber(1 - procedurePct, 2)} = ${formatNumber(roundTo(tTotal, 4), 4)} h ≈ ${correctLabel}`,
+        detail: `T_total = ${formatNumber(tVol, 2)} ÷ ${formatNumber(flightFactor, 2)} = ${formatNumber(tTotal, 2)} h\n${formatNumber(tTotal, 2)} × 60 = ${formatNumber(roundTo(tTotal * 60, 1), 1)} min = ${correctLabel}`,
       },
     ]
   );

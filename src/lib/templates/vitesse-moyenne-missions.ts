@@ -1,4 +1,4 @@
-import { formatKmH, formatNumber, roundTo } from "../format";
+import { formatKmH, formatNumber, roundHours, roundTo } from "../format";
 import { AIRCRAFT } from "../constants";
 import {
   makeQuestion,
@@ -39,15 +39,18 @@ export const vitesseMoyenneMissions: TemplateGenerator = () => {
     },
   ];
 
-  const times = missions.map((m) => toHours(m.h, m.m));
-  const distances = missions.map((m, i) => m.v * times[i]!);
-  const totalDist = distances.reduce((a, b) => a + b, 0);
-  const totalTime = times.reduce((a, b) => a + b, 0);
+  const times = missions.map((m) => roundHours(toHours(m.h, m.m)));
+  const distances = missions.map((m, i) => roundTo(m.v * times[i]!, 2));
+  const totalDist = roundTo(
+    distances.reduce((a, b) => a + b, 0),
+    2
+  );
+  const totalTime = roundHours(times.reduce((a, b) => a + b, 0));
   const avg = roundTo(totalDist / totalTime, 1);
 
   const { correctLabel, distractors } = nearbyDistractors(
     avg,
-    [2.5, -3.2, 4.5, -1.8, 6],
+    [10, -15, 20, -25, 30],
     (n) => formatKmH(n, 1),
     1
   );
@@ -63,7 +66,7 @@ export const vitesseMoyenneMissions: TemplateGenerator = () => {
         detail: missions
           .map(
             (m, i) =>
-              `${formatHM(m.h, m.m)} = ${formatNumber(roundTo(times[i]!, 4), 4)} h`
+              `${formatHM(m.h, m.m)} = ${formatNumber(times[i]!, 2)} h`
           )
           .join("\n"),
       },
@@ -72,13 +75,13 @@ export const vitesseMoyenneMissions: TemplateGenerator = () => {
         detail: missions
           .map(
             (m, i) =>
-              `${m.label} : ${formatNumber(m.v)} × ${formatNumber(roundTo(times[i]!, 4), 4)} = ${formatNumber(roundTo(distances[i]!, 2), 2)} km`
+              `${m.label} : ${formatNumber(m.v)} × ${formatNumber(times[i]!, 2)} = ${formatNumber(distances[i]!, 2)} km`
           )
           .join("\n"),
       },
       {
         title: "Vitesse moyenne",
-        detail: `Distance totale = ${formatNumber(roundTo(totalDist, 2), 2)} km\nTemps total = ${formatNumber(roundTo(totalTime, 4), 4)} h\nVitesse moyenne = ${formatNumber(roundTo(totalDist, 2), 2)} ÷ ${formatNumber(roundTo(totalTime, 4), 4)} = ${formatKmH(avg, 1)}`,
+        detail: `Distance totale = ${formatNumber(totalDist, 2)} km\nTemps total = ${formatNumber(totalTime, 2)} h\nVitesse moyenne = ${formatNumber(totalDist, 2)} ÷ ${formatNumber(totalTime, 2)} = ${formatKmH(avg, 1)}`,
       },
     ]
   );

@@ -3,13 +3,14 @@ import {
   formatLiters,
   formatNumber,
   formatPercent,
+  roundHours,
   roundTo,
 } from "../format";
 import {
   makeQuestion,
   nearbyDistractors,
   randChoice,
-  randInt,
+  spacedDeltas,
   type TemplateGenerator,
 } from "../helpers";
 
@@ -22,24 +23,31 @@ export const carburantRotationUrgence: TemplateGenerator = () => {
   const pctC = randChoice([0.2, 0.22, 0.25, 0.26, 0.28, 0.3]);
   const distance = randChoice([480, 540, 600, 660, 720, 780]);
 
-  const v = v0 * (1 + pctV);
-  const c = c0 * (1 + pctC);
+  const v = roundTo(v0 * (1 + pctV), 1);
+  const c = roundTo(c0 * (1 + pctC), 0);
   const totalDist = distance * 2;
-  const duration = totalDist / v;
-  const fuel = c * duration;
-  const fuelRounded = Math.round(fuel);
+  const duration = roundHours(totalDist / v);
+  const fuelExact = roundTo(c * duration, 2);
+  const fuelRounded = Math.round(fuelExact);
+  const oneWay = Math.round(c * roundHours(distance / v));
+  const baseConso = Math.round(c0 * duration);
+  const forgotSpeed = Math.round(c * roundHours(totalDist / v0));
 
   const { correctLabel, distractors } = nearbyDistractors(
     fuelRounded,
-    [
-      Math.round(c0 * duration) - fuelRounded,
-      Math.round(c * (distance / v)) - fuelRounded,
-      Math.round(c * (totalDist / v0)) - fuelRounded,
-      Math.round(fuel * 1.08) - fuelRounded,
-      -50,
-      80,
-      -120,
-    ],
+    spacedDeltas(
+      [
+        300,
+        -500,
+        700,
+        -900,
+        1100,
+        baseConso - fuelRounded,
+        oneWay - fuelRounded,
+        forgotSpeed - fuelRounded,
+      ],
+      200
+    ),
     (n) => formatLiters(n, 0)
   );
 
@@ -51,7 +59,7 @@ export const carburantRotationUrgence: TemplateGenerator = () => {
     [
       {
         title: "Caractéristiques de vol en urgence",
-        detail: `Vitesse d'urgence = ${formatNumber(v0)} × (1 + ${pctV.toFixed(2).replace(".", ",")}) = ${formatNumber(roundTo(v, 1), 1)} km/h\nConsommation d'urgence = ${formatNumber(c0)} × (1 + ${pctC.toFixed(2).replace(".", ",")}) = ${formatNumber(roundTo(c, 0))} L/h`,
+        detail: `Vitesse d'urgence = ${formatNumber(v0)} × (1 + ${pctV.toFixed(2).replace(".", ",")}) = ${formatNumber(v, 1)} km/h\nConsommation d'urgence = ${formatNumber(c0)} × (1 + ${pctC.toFixed(2).replace(".", ",")}) = ${formatNumber(c)} L/h`,
       },
       {
         title: "Distance de la mission complète",
@@ -59,11 +67,11 @@ export const carburantRotationUrgence: TemplateGenerator = () => {
       },
       {
         title: "Calcul du temps nécessaire",
-        detail: `Durée = ${formatNumber(totalDist)} ÷ ${formatNumber(roundTo(v, 1), 1)} = ${formatNumber(roundTo(duration, 3), 3)} heures`,
+        detail: `Durée = ${formatNumber(totalDist)} ÷ ${formatNumber(v, 1)} = ${formatNumber(duration, 2)} h`,
       },
       {
         title: "Consommation pour la mission",
-        detail: `Carburant total = ${formatNumber(roundTo(c, 0))} × ${formatNumber(roundTo(duration, 3), 3)} = ${formatLiters(fuelRounded)}`,
+        detail: `Carburant total = ${formatNumber(c)} × ${formatNumber(duration, 2)} = ${formatNumber(fuelExact, 2, { trimZeros: true })} ≈ ${formatLiters(fuelRounded)}`,
       },
     ]
   );

@@ -3,41 +3,41 @@ import {
   formatKm,
   formatNumber,
   formatPercent,
+  roundHours,
   roundTo,
 } from "../format";
 import {
   makeQuestion,
   nearbyDistractors,
   randChoice,
+  spacedDeltas,
   type TemplateGenerator,
 } from "../helpers";
 
 /** Capacité + réserve + densité → distance max */
 export const autonomieReserveSecurite: TemplateGenerator = () => {
-  const craft = randChoice([...AIRCRAFT.transport, ...AIRCRAFT.jet, "chasseur"]);
+  const craft = randChoice([...AIRCRAFT.transport, ...AIRCRAFT.jet]);
   const capacityL = randChoice([800, 900, 950, 1000, 1050, 1100, 1200]);
   const density = randChoice([0.78, 0.8, 0.81, 0.84, 0.86]);
   const reservePct = randChoice([0.08, 0.1, 0.12, 0.15]);
   const consumption = randChoice([70, 75, 78, 80, 85, 88, 90, 95]);
   const speed = randChoice([160, 165, 180, 190, 200, 205, 220]);
 
-  const mass = capacityL * density;
-  const reserve = mass * reservePct;
-  const usable = mass - reserve;
-  const hours = usable / consumption;
-  const distance = roundTo(hours * speed, 0);
+  const mass = roundTo(capacityL * density, 1);
+  const reserve = roundTo(mass * reservePct, 2);
+  const usable = roundTo(mass - reserve, 2);
+  const hours = roundHours(usable / consumption);
+  const distanceExact = roundTo(hours * speed, 2);
+  const distance = Math.round(distanceExact);
 
-  const withoutReserve = roundTo((mass / consumption) * speed, 0);
+  const hoursFull = roundHours(mass / consumption);
+  const withoutReserve = roundTo(hoursFull * speed, 0);
   const { correctLabel, distractors } = nearbyDistractors(
     distance,
-    [
-      withoutReserve - distance,
-      30,
-      -45,
-      60,
-      -25,
-      roundTo(hours * speed * 0.95, 0) - distance,
-    ],
+    spacedDeltas(
+      [80, -120, 160, -200, 240, withoutReserve - distance],
+      40
+    ),
     (n) => formatKm(n, 0)
   );
 
@@ -49,19 +49,19 @@ export const autonomieReserveSecurite: TemplateGenerator = () => {
     [
       {
         title: "Masse totale de carburant",
-        detail: `${formatNumber(capacityL)} L × ${formatNumber(density, 2)} kg/L = ${formatNumber(roundTo(mass, 1), 1)} kg`,
+        detail: `${formatNumber(capacityL)} L × ${formatNumber(density, 2)} kg/L = ${formatNumber(mass, 1)} kg`,
       },
       {
         title: "Réserve de sécurité",
-        detail: `${formatPercent(reservePct)} de ${formatNumber(roundTo(mass, 1), 1)} = ${formatNumber(roundTo(reserve, 2), 2)} kg à conserver`,
+        detail: `${formatPercent(reservePct)} de ${formatNumber(mass, 1)} = ${formatNumber(reserve, 2)} kg à conserver`,
       },
       {
         title: "Carburant utilisable",
-        detail: `${formatNumber(roundTo(mass, 1), 1)} − ${formatNumber(roundTo(reserve, 2), 2)} = ${formatNumber(roundTo(usable, 2), 2)} kg`,
+        detail: `${formatNumber(mass, 1)} − ${formatNumber(reserve, 2)} = ${formatNumber(usable, 2)} kg`,
       },
       {
         title: "Autonomie et distance",
-        detail: `Autonomie = ${formatNumber(roundTo(usable, 2), 2)} ÷ ${formatNumber(consumption)} = ${formatNumber(roundTo(hours, 2), 2)} h\nDistance = ${formatNumber(roundTo(hours, 2), 2)} × ${formatNumber(speed)} = ${formatKm(distance)}`,
+        detail: `Autonomie = ${formatNumber(usable, 2)} ÷ ${formatNumber(consumption)} = ${formatNumber(hours, 2)} h\nDistance = ${formatNumber(hours, 2)} × ${formatNumber(speed)} = ${distanceExact === distance ? formatKm(distance) : `${formatNumber(distanceExact, 2, { trimZeros: true })} ≈ ${formatKm(distance)}`}`,
       },
     ]
   );

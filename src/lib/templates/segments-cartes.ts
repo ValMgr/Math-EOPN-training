@@ -1,9 +1,10 @@
-import { formatKm, formatNumber, roundTo } from "../format";
+import { formatKm, formatNumber, roundHours, roundTo } from "../format";
 import { AIRCRAFT } from "../constants";
 import {
   makeQuestion,
   nearbyDistractors,
   randChoice,
+  spacedDeltas,
   type TemplateGenerator,
 } from "../helpers";
 
@@ -22,13 +23,13 @@ export const segmentsCartes: TemplateGenerator = () => {
   const kmPerCm2 = scale2 / 100_000;
   const d1 = cm1 * kmPerCm1;
   const d2 = cm2 * kmPerCm2;
-  const t3 = t3min / 60;
-  const d3 = v3 * t3;
+  const t3 = roundHours(t3min / 60);
+  const d3 = roundTo(v3 * t3, 1);
   const total = roundTo(d1 + d2 + d3, 1);
 
   const { correctLabel, distractors } = nearbyDistractors(
     total,
-    [5, -8, 12, -15, d3 - (d1 + d2), 20],
+    spacedDeltas([30, -50, 80, -110, 140, roundTo(2 * d3, 1) - total], 20),
     (n) => formatKm(n, 1),
     1
   );
@@ -49,11 +50,11 @@ export const segmentsCartes: TemplateGenerator = () => {
       },
       {
         title: "Distance du troisième segment",
-        detail: `${t3min} min = ${formatNumber(roundTo(t3, 3), 3)} h\nDistance = ${formatNumber(v3)} × ${formatNumber(roundTo(t3, 3), 3)} = ${formatNumber(roundTo(d3, 1), 1)} km`,
+        detail: `${t3min} min = ${formatNumber(t3, 2)} h\nDistance = ${formatNumber(v3)} × ${formatNumber(t3, 2)} = ${formatNumber(d3, 1)} km`,
       },
       {
         title: "Distance totale",
-        detail: `Total = ${formatNumber(d1, 1, { trimZeros: true })} + ${formatNumber(d2, 1, { trimZeros: true })} + ${formatNumber(roundTo(d3, 1), 1)} = ${formatKm(total, 1)}`,
+        detail: `Total = ${formatNumber(d1, 1, { trimZeros: true })} + ${formatNumber(d2, 1, { trimZeros: true })} + ${formatNumber(d3, 1)} = ${formatKm(total, 1)}`,
       },
     ]
   );

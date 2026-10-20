@@ -1,4 +1,10 @@
-import { addMinutesToClock, formatClock, formatNumber, roundTo } from "../format";
+import {
+  addMinutesToClock,
+  formatClock,
+  formatNumber,
+  roundHours,
+  roundTo,
+} from "../format";
 import { AIRCRAFT, BASES } from "../constants";
 import {
   makeQuestion,
@@ -17,21 +23,37 @@ export const rendezVousRattrapage: TemplateGenerator = () => {
   const vSlow = randChoice([140, 150, 160, 170, 180]);
   const vFast = randChoice([320, 340, 360, 380, 400, 420]);
 
-  const delayH = delayMin / 60;
-  const lead = vSlow * delayH;
+  const delayH = roundHours(delayMin / 60);
+  const lead = roundTo(vSlow * delayH, 1);
   const relative = vFast - vSlow;
-  const catchH = lead / relative;
-  const catchMin = catchH * 60;
-  const meeting = addMinutesToClock(startH, startM, delayMin + catchMin);
+  const catchH = roundHours(lead / relative);
+  const catchMin = roundTo(catchH * 60, 1);
+  const catchMinRounded = Math.round(catchMin);
+  const meeting = addMinutesToClock(
+    startH,
+    startM,
+    delayMin + catchMinRounded
+  );
   const correctLabel = meeting.label;
 
+  const blocked = [0, -delayMin];
+  const offsets: number[] = [];
+  for (const delta of [-75, -60, -45, -30, -15, 15, 30, 45, 60, 75, 90]) {
+    const anchors = [...blocked, ...offsets];
+    if (anchors.every((anchor) => Math.abs(anchor - delta) >= 15)) {
+      offsets.push(delta);
+    }
+    if (offsets.length === 3) break;
+  }
+  const takeoff = addMinutesToClock(startH, startM, delayMin);
   const distractors = [
-    addMinutesToClock(startH, startM, delayMin + catchMin - 4).label,
-    addMinutesToClock(startH, startM, delayMin + catchMin + 2).label,
-    addMinutesToClock(startH, startM, delayMin + catchMin + 4).label,
-    addMinutesToClock(startH, startM, delayMin + catchMin - 2).label,
-    addMinutesToClock(startH, startM, catchMin).label,
-  ].filter((l) => l !== correctLabel);
+    ...offsets.map(
+      (delta) =>
+        addMinutesToClock(startH, startM, delayMin + catchMinRounded + delta)
+          .label
+    ),
+    addMinutesToClock(startH, startM, catchMinRounded).label,
+  ].filter((label) => label !== correctLabel);
 
   return makeQuestion(
     "rendez-vous-rattrapage",
@@ -41,11 +63,11 @@ export const rendezVousRattrapage: TemplateGenerator = () => {
     [
       {
         title: "Décalage temporel",
-        detail: `Décalage = ${delayMin} min = ${formatNumber(roundTo(delayH, 3), 3)} h`,
+        detail: `Décalage = ${delayMin} min = ${formatNumber(delayH, 2)} h`,
       },
       {
         title: "Distance d'avance",
-        detail: `Distance d'avance = ${formatNumber(vSlow)} × ${formatNumber(roundTo(delayH, 3), 3)} = ${formatNumber(roundTo(lead, 1), 1)} km`,
+        detail: `Distance d'avance = ${formatNumber(vSlow)} × ${formatNumber(delayH, 2)} = ${formatNumber(lead, 1)} km`,
       },
       {
         title: "Vitesse relative de rattrapage",
@@ -53,11 +75,11 @@ export const rendezVousRattrapage: TemplateGenerator = () => {
       },
       {
         title: "Temps de rattrapage",
-        detail: `Temps = ${formatNumber(roundTo(lead, 1), 1)} ÷ ${formatNumber(relative)} = ${formatNumber(roundTo(catchH, 3), 3)} h ≈ ${formatNumber(roundTo(catchMin, 0))} min`,
+        detail: `Temps = ${formatNumber(lead, 1)} ÷ ${formatNumber(relative)} = ${formatNumber(catchH, 2)} h\n${formatNumber(catchH, 2)} × 60 = ${formatNumber(catchMin, 1)} min, soit ${formatNumber(catchMinRounded)} min`,
       },
       {
         title: "Heure de rendez-vous",
-        detail: `Décollage du ${fastCraft} : ${formatClock(startH, startM)} + ${delayMin} min\nRendez-vous = ${correctLabel}`,
+        detail: `Décollage du ${fastCraft} : ${formatClock(startH, startM)} + ${delayMin} min = ${takeoff.label}\nRendez-vous = ${takeoff.label} + ${formatNumber(catchMinRounded)} min = ${correctLabel}`,
       },
     ]
   );

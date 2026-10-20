@@ -1,15 +1,16 @@
 import { AIRCRAFT } from "../constants";
 import {
-  formatKg,
   formatNumber,
   formatPercent,
   formatTonnes,
+  roundHours,
   roundTo,
 } from "../format";
 import {
   makeQuestion,
   nearbyDistractors,
   randChoice,
+  spacedDeltas,
   type TemplateGenerator,
 } from "../helpers";
 
@@ -22,22 +23,28 @@ export const masseCarburantReserveMeteo: TemplateGenerator = () => {
   const reservePct = randChoice([0.15, 0.18, 0.2, 0.22, 0.25]);
   const density = randChoice([0.78, 0.8, 0.82, 0.84]);
 
-  const time = distance / speed;
-  const volumeBase = consumption * time;
-  const volumeTotal = volumeBase * (1 + reservePct);
-  const massKg = volumeTotal * density;
+  const time = roundHours(distance / speed);
+  const volumeFactor = roundTo(1 + reservePct, 2);
+  const volumeBase = roundTo(consumption * time, 2);
+  const volumeTotal = roundTo(volumeBase * volumeFactor, 2);
+  const massKg = roundTo(volumeTotal * density, 2);
   const massTonnes = roundTo(massKg / 1000, 2);
+  const withoutReserve = roundTo(roundTo(volumeBase * density, 2) / 1000, 2);
 
   const { correctLabel, distractors } = nearbyDistractors(
     massTonnes,
-    [
-      roundTo(volumeBase * density / 1000, 2) - massTonnes,
-      0.1,
-      -0.12,
-      0.25,
-      -0.08,
-      roundTo(volumeTotal / 1000, 2) - massTonnes,
-    ],
+    spacedDeltas(
+      [
+        0.6,
+        -1,
+        1.4,
+        -1.8,
+        2.2,
+        withoutReserve - massTonnes,
+        roundTo(volumeTotal / 1000, 2) - massTonnes,
+      ],
+      0.4
+    ),
     (n) => formatTonnes(n, 2),
     2
   );
@@ -50,19 +57,19 @@ export const masseCarburantReserveMeteo: TemplateGenerator = () => {
     [
       {
         title: "Temps de vol",
-        detail: `Temps = ${formatNumber(distance)} ÷ ${formatNumber(speed)} = ${formatNumber(roundTo(time, 3), 3)} h`,
+        detail: `Temps = ${formatNumber(distance)} ÷ ${formatNumber(speed)} = ${formatNumber(time, 2)} h`,
       },
       {
         title: "Volume de base",
-        detail: `Volume = ${formatNumber(consumption)} × ${formatNumber(roundTo(time, 3), 3)} = ${formatNumber(roundTo(volumeBase, 0))} L`,
+        detail: `Volume = ${formatNumber(consumption)} × ${formatNumber(time, 2)} = ${formatNumber(volumeBase, 2, { trimZeros: true })} L`,
       },
       {
         title: "Application de la majoration météo",
-        detail: `Facteur = 1 + ${reservePct.toFixed(2).replace(".", ",")}\nVolume total = ${formatNumber(roundTo(volumeBase, 0))} × ${formatNumber(1 + reservePct, 2)} = ${formatNumber(roundTo(volumeTotal, 0))} L`,
+        detail: `Facteur = 1 + ${reservePct.toFixed(2).replace(".", ",")}\nVolume total = ${formatNumber(volumeBase, 2, { trimZeros: true })} × ${formatNumber(volumeFactor, 2)} = ${formatNumber(volumeTotal, 2, { trimZeros: true })} L`,
       },
       {
         title: "Conversion en masse",
-        detail: `Masse = ${formatNumber(roundTo(volumeTotal, 0))} × ${formatNumber(density, 2)} = ${formatKg(roundTo(massKg, 0))} = ${formatTonnes(massTonnes, 2)}`,
+        detail: `Masse = ${formatNumber(volumeTotal, 2, { trimZeros: true })} × ${formatNumber(density, 2)} = ${formatNumber(massKg, 2, { trimZeros: true })} kg ≈ ${formatTonnes(massTonnes, 2)}`,
       },
     ]
   );
