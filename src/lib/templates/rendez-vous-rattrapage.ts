@@ -35,25 +35,39 @@ export const rendezVousRattrapage: TemplateGenerator = () => {
     delayMin + catchMinRounded
   );
   const correctLabel = meeting.label;
-
-  const blocked = [0, -delayMin];
-  const offsets: number[] = [];
-  for (const delta of [-75, -60, -45, -30, -15, 15, 30, 45, 60, 75, 90]) {
-    const anchors = [...blocked, ...offsets];
-    if (anchors.every((anchor) => Math.abs(anchor - delta) >= 15)) {
-      offsets.push(delta);
-    }
-    if (offsets.length === 3) break;
-  }
   const takeoff = addMinutesToClock(startH, startM, delayMin);
-  const distractors = [
-    ...offsets.map(
-      (delta) =>
-        addMinutesToClock(startH, startM, delayMin + catchMinRounded + delta)
-          .label
-    ),
-    addMinutesToClock(startH, startM, catchMinRounded).label,
-  ].filter((label) => label !== correctLabel);
+  const meetingOffset = delayMin + catchMinRounded;
+
+  const catchMinutes = (distanceKm: number, closingKmH: number) => {
+    const hours = roundHours(distanceKm / closingKmH);
+    return Math.round(roundTo(hours * 60, 1));
+  };
+
+  // Every choice must be after the later takeoff. A time before that
+  // departure is impossible and can be discarded without calculating.
+  const picked: number[] = [];
+  const pushOffset = (offsetMin: number) => {
+    if (picked.length >= 4) return;
+    const offset = Math.round(offsetMin);
+    if (offset <= delayMin || offset === meetingOffset) return;
+    if (Math.abs(offset - meetingOffset) < 5) return;
+    if (picked.some((existing) => Math.abs(existing - offset) < 5)) return;
+    picked.push(offset);
+  };
+
+  const leadAtFast = roundTo(vFast * delayH, 1);
+  pushOffset(delayMin + catchMinutes(lead, vFast + vSlow));
+  pushOffset(delayMin + catchMinutes(lead, vFast));
+  pushOffset(delayMin + catchMinutes(lead, vSlow));
+  pushOffset(delayMin + catchMinutes(leadAtFast, relative));
+  pushOffset(meetingOffset + delayMin);
+  for (const delta of [-15, 15, -30, 30, -45, 45, 60, 75, 90]) {
+    pushOffset(meetingOffset + delta);
+  }
+
+  const distractors = picked.map(
+    (offset) => addMinutesToClock(startH, startM, offset).label
+  );
 
   return makeQuestion(
     "rendez-vous-rattrapage",
