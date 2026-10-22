@@ -11,6 +11,12 @@ export function randChoice<T>(items: T[]): T {
   return items[randInt(0, items.length - 1)]!;
 }
 
+/** "de Nice" / "d'Istres" for place names. */
+export function de(name: string): string {
+  const first = name.charAt(0).toLowerCase();
+  return "aeiouéèêëàâîïôûœ".includes(first) ? `d'${name}` : `de ${name}`;
+}
+
 export function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {

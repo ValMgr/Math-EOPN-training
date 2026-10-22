@@ -9,6 +9,15 @@ import { cartePhasesProcedures } from "./carte-phases-procedures";
 import { autonomieReserveSecurite } from "./autonomie-reserve-securite";
 import { vitesseMoyenneMissions } from "./vitesse-moyenne-missions";
 import { rencontreFrontale } from "./rencontre-frontale";
+import { carburantReglementaire } from "./carburant-reglementaire";
+import { tempsSurZone } from "./temps-sur-zone";
+import { deroutementBingo } from "./deroutement-bingo";
+import { ventDansLaxe } from "./vent-dans-laxe";
+import { monteeCroisiereDescente } from "./montee-croisiere-descente";
+import { regleUnPourSoixante } from "./regle-un-pour-soixante";
+import { zoneCarteAire } from "./zone-carte-aire";
+import { releveSurZone } from "./releve-sur-zone";
+import { circuitRecherche } from "./circuit-recherche";
 
 export const TEMPLATES: TemplateGenerator[] = [
   carburantRotationUrgence,
@@ -21,6 +30,15 @@ export const TEMPLATES: TemplateGenerator[] = [
   autonomieReserveSecurite,
   vitesseMoyenneMissions,
   rencontreFrontale,
+  carburantReglementaire,
+  tempsSurZone,
+  deroutementBingo,
+  ventDansLaxe,
+  monteeCroisiereDescente,
+  regleUnPourSoixante,
+  zoneCarteAire,
+  releveSurZone,
+  circuitRecherche,
 ];
 
 export { type TemplateGenerator } from "../helpers";

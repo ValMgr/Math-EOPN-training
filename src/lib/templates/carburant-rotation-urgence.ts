@@ -53,7 +53,7 @@ export const carburantRotationUrgence: TemplateGenerator = () => {
 
   return makeQuestion(
     "carburant-rotation-urgence",
-    `Dans le cadre d'une opération de sauvetage, un ${craft} navigue normalement à ${formatNumber(v0)} km/h avec une consommation de ${formatNumber(c0)} L/h. Face à l'urgence, l'équipage décide d'augmenter sa vitesse de ${formatPercent(pctV)}, entraînant une hausse de consommation de ${formatPercent(pctC)}. Il doit se rendre sur un site distant de ${formatNumber(distance)} km puis rentrer en se déplaçant à sa vitesse augmentée. Quel sera le besoin en carburant pour cette rotation ?`,
+    `Dans le cadre d'une opération de sauvetage, un ${craft} navigue normalement à ${formatNumber(v0)} km/h avec une consommation de ${formatNumber(c0)} L/h. Face à l'urgence, l'équipage décide d'augmenter sa vitesse de ${formatPercent(pctV)}, entraînant une hausse de consommation de ${formatPercent(pctC)}. À cette vitesse augmentée, il rejoint un site distant de ${formatNumber(distance)} km puis en revient. Quel sera le besoin en carburant pour cette rotation aller-retour ?`,
     correctLabel,
     distractors,
     [

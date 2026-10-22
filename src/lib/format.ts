@@ -31,6 +31,14 @@ export function formatKm(value: number, decimals = 0): string {
   return `${formatNumber(value, decimals, { trimZeros: true })} km`;
 }
 
+export function formatNm(value: number, decimals = 0): string {
+  return `${formatNumber(value, decimals, { trimZeros: true })} NM`;
+}
+
+export function formatKm2(value: number, decimals = 2): string {
+  return `${formatNumber(value, decimals, { trimZeros: true })} km²`;
+}
+
 export function formatKmH(value: number, decimals = 1): string {
   return `${formatNumber(value, decimals, { trimZeros: true })} km/h`;
 }
